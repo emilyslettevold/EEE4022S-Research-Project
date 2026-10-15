@@ -1,0 +1,51 @@
+
+# INFLATE BY 10x 
+#Accelerometers
+# accelerometer_noise_density: 1.2671346241e-02   #Noise density (continuous-time)
+# accelerometer_random_walk:   8.0066043747e-04   #Bias random walk
+
+#Gyroscopes
+# gyroscope_noise_density:     6.4971123021e-04   #Noise density (continuous-time)
+# gyroscope_random_walk:       1.0324024590e-04   #Bias random walk
+
+# rostopic:                    /imu0      #the IMU ROS topic
+# update_rate:                 200.0      #Hz (for discretization of the values above)
+
+
+# INFLATE BY 5x
+#Accelerometers
+# accelerometer_noise_density: 0.00633567312   #Noise density (continuous-time) --> inflated by x5
+# accelerometer_random_walk: 0.00040033021  #Bias random walk --> inflated by x5
+
+#Gyroscopes
+# gyroscope_noise_density: 0.00032485561      #Noise density (continuous-time) --> inflated by x5
+# gyroscope_random_walk: 0.00005162012         #Bias random walk --> inflated by x5
+
+# rostopic:                    /imu0      #the IMU ROS topic
+# update_rate:                 200.0      #Hz (for discretization of the values above)
+
+
+# INFLATE BY 7x
+#Accelerometers
+accelerometer_noise_density: 8.8699423687e-03   #Noise density (continuous-time) --> inflated by x7
+accelerometer_random_walk:   5.6046230623e-04   #Bias random walk --> inflated by x7
+
+#Gyroscopes
+gyroscope_noise_density:     4.5479786115e-04   #Noise density (continuous-time) --> inflated by x7
+gyroscope_random_walk:       7.2268172130e-05   #Bias random walk --> inflated by x7
+
+rostopic:                    /imu0      #the IMU ROS topic
+update_rate:                 200.0      #Hz (for discretization of the values above)
+
+
+# ORIGINAL VALUES 
+#Accelerometers
+# accelerometer_noise_density: 1.2671346241e-03   #Noise density (continuous-time)
+# accelerometer_random_walk:   8.0066043747e-05   #Bias random walk
+
+#Gyroscopes
+# gyroscope_noise_density:     6.4971123021e-05   #Noise density (continuous-time)
+# gyroscope_random_walk:       1.0324024590e-05   #Bias random walk
+
+# rostopic:                    /imu0      #the IMU ROS topic
+# update_rate:                 200.0      #Hz (for discretization of the values above)
