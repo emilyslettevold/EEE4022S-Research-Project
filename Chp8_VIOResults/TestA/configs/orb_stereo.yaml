@@ -1,0 +1,49 @@
+%YAML:1.0
+# ORB-SLAM3 settings (v1.0 format) - BlueROV2 stereo rig, HALF resolution 800x600
+# STEREO ONLY (no IMU)
+# Intrinsics: underwater Kalibr stereo calibration scaled x0.5. ORB-SLAM3 rectifies internally.
+File.version: "1.0"
+Camera.type: "PinHole"
+Camera1.fx: 479.345287
+Camera1.fy: 479.038201
+Camera1.cx: 395.811731
+Camera1.cy: 321.517351
+Camera1.k1: 0.060217847
+Camera1.k2: -0.072059828
+Camera1.p1: -0.000229904
+Camera1.p2: -0.000047009
+Camera2.fx: 481.665394
+Camera2.fy: 481.357640
+Camera2.cx: 385.636355
+Camera2.cy: 316.993803
+Camera2.k1: 0.054457966
+Camera2.k2: -0.064038441
+Camera2.p1: -0.000601376
+Camera2.p2: 0.000129669
+Camera.width: 800
+Camera.height: 600
+Camera.fps: 31
+Camera.RGB: 0
+Stereo.ThDepth: 40.0
+# right camera -> left camera (inverse of Kalibr T_cn_cnm1)
+Stereo.T_c1_c2: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [0.999867113, 0.001817774, 0.016200375, 0.150092485, -0.001852948, 0.999995958, 0.002156409, -0.000933268, -0.016196390, -0.002186141, 0.999866440, -0.001722040, 0.000000000, 0.000000000, 0.000000000, 1.000000000]
+ORBextractor.nFeatures: 1500
+ORBextractor.scaleFactor: 1.2
+ORBextractor.nLevels: 8
+# lowered FAST thresholds for low-contrast underwater images (EuRoC default 20/7)
+ORBextractor.iniThFAST: 12
+ORBextractor.minThFAST: 5
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -3.5
+Viewer.ViewpointF: 500.0
