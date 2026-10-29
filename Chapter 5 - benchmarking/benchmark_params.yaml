@@ -1,0 +1,96 @@
+# =====================================================================
+# Tank benchmark: single source of truth for BOTH frameworks.
+# Edit values HERE only, then run make_configs.py. Never hand-edit the
+# generated ORB-SLAM3 / VINS-Fusion configs, or they can drift apart.
+# =====================================================================
+
+camera:
+  # From the Tank dataset parameter YAML (paper Fig. 6). The images are
+  # already refraction-corrected (Pinax model) and rectified, so both
+  # cameras share one ideal pinhole model with zero distortion.
+  width: 612
+  height: 512
+  fps: 20
+  fx: 655.0
+  fy: 655.0
+  cx: 306.0
+  cy: 256.0
+  bf: 78.89165891925023        # baseline * fx  ->  baseline = bf / fx = 0.12045 m
+
+imu:
+  # Continuous-time noise densities (Kalibr / ORB-SLAM3 convention).
+  # Source: the dataset authors' own ORB-SLAM3-based config for these bags
+  # (AQUA-SLAM, data/underwater_orbslam3_blue_gx5_*.yaml).
+  # For reference, the 3DM-GX5-25 datasheet gives 0.005 deg/s/sqrt(Hz) gyro
+  # (8.7e-5 rad/s/sqrt(Hz)) and 25 ug/sqrt(Hz) accel (2.45e-4 m/s^2/sqrt(Hz)),
+  # so these values are inflated ~11x (gyro) and ~40x (accel), which is normal
+  # practice to absorb vibration, temperature and unmodelled effects.
+  gyro_noise_density: 1.0e-3   # rad/s/sqrt(Hz)
+  acc_noise_density: 1.0e-2    # m/s^2/sqrt(Hz)
+  gyro_random_walk: 1.0e-5     # rad/s^2/sqrt(Hz)
+  acc_random_walk: 1.0e-4      # m/s^3/sqrt(Hz)
+  # MEASURE THIS with check_dataset.py and update. The paper says 333 Hz;
+  # it is used to convert the densities above into per-sample values.
+  rate_hz: 333.1
+  gravity: 9.81                # ORB-SLAM3 hard-codes 9.81; VINS g_norm must match
+
+# T_imu_camera = pose of the LEFT camera expressed in the IMU frame
+# (maps camera-frame points into the IMU frame). This is the same quantity
+# ORB-SLAM3 calls IMU.T_b_c1 and VINS-Fusion calls body_T_cam0.
+# Two sets exist because the rig was remounted between recording sessions.
+extrinsics:
+  A:   # Tank parameter YAML (paper Fig. 6) = AQUA-SLAM "short" config
+    - [-0.0165, -0.0175, -0.9997, -0.211687435]
+    - [-0.0106,  0.9998, -0.0173, -0.097259169]
+    - [ 0.9998,  0.0103, -0.0167, -0.056238089]
+    - [ 0.0,     0.0,     0.0,     1.0]
+  B:   # AQUA-SLAM "long" config ("gx5 10.24 calibration")
+    - [ 0.0832135, -0.995332,  -0.0488759,  0.124137]
+    - [-0.0141982,  0.0478569, -0.998753,  -0.235279]
+    - [ 0.996431,   0.0838037, -0.0101496, -0.0783153]
+    - [ 0.0,        0.0,        0.0,        1.0]
+
+# Which extrinsic set each sequence uses (from the authors' launch files).
+# check_dataset.py verifies this from the data itself; if it disagrees for a
+# sequence, trust the data check and change the letter here.
+sequences:
+  Structure_Easy: A
+  Structure_Medium: A
+  Structure_Hard: A
+  HalfTank_Easy: A
+  HalfTank_Medium: A
+  HalfTank_Hard: A
+  WholeTank_Medium: B
+  WholeTank_Hard: B
+
+orbslam3:
+  camera_type: Rectified       # requires the Settings.cc printout patch in /software/ORB_SLAM3
+  rgb: 0                       # PNGs written by OpenCV are BGR
+  th_depth: 35.0               # close/far threshold in baselines (authors' value, 4.2 m)
+  n_features: 1000             # authors' Tank values from here down
+  scale_factor: 1.2
+  n_levels: 8
+  ini_th_fast: 15
+  min_th_fast: 3
+  loop_closing: 0              # OFF (also disables map merging)
+  fast_imu_init: 1             # IMU.fastInit: skip the 0.5 m/s^2 acceleration gate at initialisation
+                               # (requires the Tracking.cc patch in /software/ORB_SLAM3 to be read)
+
+vins:
+  multiple_thread: 0           # 1 would silently process only every 2nd frame
+  max_cnt: 150                 # VINS-Fusion EuRoC defaults from here down
+  min_dist: 30
+  F_threshold: 1.0
+  flow_back: 1
+  show_track: 0
+  max_solver_time: 0.2          # default 0.04 s is a real-time guard; the VINS image runs under
+                               # amd64 emulation, so let the 8-iteration cap (hardware-independent) limit it
+  max_num_iterations: 8
+  keyframe_parallax: 10.0
+  estimate_extrinsic: 0        # ORB-SLAM3 cannot refine extrinsics, so neither does VINS
+  estimate_td: 0               # ORB-SLAM3 cannot estimate time offset, so neither does VINS
+  td: 0.0
+  imu_topic: /imu/data
+  image0_topic: /cam0/image_raw
+  image1_topic: /cam1/image_raw
+  output_path: /root/vins_output   # must exist before vins_node starts
